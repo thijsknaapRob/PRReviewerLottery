@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "charset": "utf8",
     "experimentalDecorators": true,
-    "module": "amd",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strict": true,

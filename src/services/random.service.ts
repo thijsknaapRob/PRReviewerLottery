@@ -10,20 +10,8 @@ export class RandomReviewerDrawService {
     mainSet: IdentityRef[],
     removeSet: IdentityRef[]
   ) {
-    const mainSetCopy = [...mainSet];
-    for (let i = 0; i < removeSet.length; i++) {
-      const itemToRemove = removeSet[i];
-
-      for (let j = 0; j < mainSet.length; j++) {
-        const mainItem = mainSet[j];
-
-        if (mainItem.id == itemToRemove.id) {
-          mainSetCopy.splice(j, 1);
-          continue;
-        }
-      }
-    }
-    return mainSetCopy;
+    const removeIds = new Set(removeSet.map((item) => item.id));
+    return mainSet.filter((item) => !removeIds.has(item.id));
   }
 
   public drawReviewers(

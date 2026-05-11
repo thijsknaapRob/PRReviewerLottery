@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SDK from "azure-devops-extension-sdk";
-import { CoreRestClient, WebApiTeam } from "azure-devops-extension-api/Core";
+import { WebApiTeam } from "azure-devops-extension-api/Core";
 import { isNil } from "lodash";
 
 import { IListBoxItem } from "azure-devops-ui/ListBox";
@@ -65,7 +65,13 @@ export class OverviewTab extends React.Component<{}, IOverviewTabState> {
     return options;
   }
   private async initializeState(): Promise<void> {
-    await SDK.ready();
+    try {
+      await SDK.ready();
+    } catch (e) {
+      console.warn("Azure DevOps SDK not available:", e);
+      this.setState({ isLoaded: true });
+      return;
+    }
 
     const userName = this.state._azureDevopsService.name().displayName;
     this.setState({
@@ -199,7 +205,7 @@ export class OverviewTab extends React.Component<{}, IOverviewTabState> {
 
     var currentSettings = settings ?? defaultProjectSettings;
     if (!isLoaded) {
-      <Spinner label="loading" />;
+      return <Spinner label="loading" />;
     }
 
     return (
@@ -234,7 +240,7 @@ export class OverviewTab extends React.Component<{}, IOverviewTabState> {
               <div className="flex-column full-width">
                 <Observer reviewerGroups={currentSettings.reviewerSettings}>
                   {(props: { reviewerGroups: IReviewerGroup[] }) => {
-                    return props.reviewerGroups === []
+                    return props.reviewerGroups.length === 0
                       ? null
                       : props.reviewerGroups.map((item) =>
                           this.renderRow(item, teams)
@@ -257,7 +263,7 @@ export class OverviewTab extends React.Component<{}, IOverviewTabState> {
       <div key={item.settingId} className="reviewer-group-item">
         <Observer teams={teams}>
           {(props: { teams: WebApiTeam[] }) => {
-            return props.teams === [] ? null : (
+            return props.teams.length === 0 ? null : (
               <Dropdown
                 className="reviewer-team-picker"
                 items={this.getTeamPickerOptions()}

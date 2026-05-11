@@ -44,27 +44,31 @@ async function assignReviewers(context: any, settings: IProjectSettings) {
       });
     });
 }
-const fullId = SDK.getExtensionContext().id + "." + SDK.getContributionId();
-SDK.register(fullId, () => {
-  return {
-    execute: async (context: any) => {
-      const azureDevopsService = new AzureDevopsService();
-
-      const project = await azureDevopsService.getProject();
-
-      azureDevopsService
-        .getSetting("ProjectSettings", project!.id)
-        .then((settings: IProjectSettings) => {
-          if (!isNil(settings)) {
-            assignReviewers(context, settings)
-              .then((result) => console.log(result))
-              .catch((err) => console.log(err));
-          }
-        });
-
-      console.log(context);
-    },
-  };
-});
-
 SDK.init();
+SDK.ready().then(() => {
+  SDK.register(SDK.getContributionId(), () => {
+    return {
+      execute: async (context: any) => {
+        const azureDevopsService = new AzureDevopsService();
+
+        const project = await azureDevopsService.getProject();
+        if (!project) {
+          console.error("Could not retrieve project info");
+          return;
+        }
+
+        azureDevopsService
+          .getSetting("ProjectSettings", project.id)
+          .then((settings: IProjectSettings) => {
+            if (!isNil(settings)) {
+              assignReviewers(context, settings)
+                .then((result) => console.log(result))
+                .catch((err) => console.log(err));
+            }
+          });
+
+        console.log(context);
+      },
+    };
+  });
+});

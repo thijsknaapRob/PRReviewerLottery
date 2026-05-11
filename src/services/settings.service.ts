@@ -40,13 +40,14 @@ export class AzureDevopsService {
     collection: string,
     id: string
   ): Promise<IProjectSettings> {
-    const extensionDataService = SDK.getService<IExtensionDataService>(
+    const extensionDataService = await SDK.getService<IExtensionDataService>(
       CommonServiceIds.ExtensionDataService
     );
     const accessToken = await SDK.getAccessToken();
-    const dataManager = await (
-      await extensionDataService
-    ).getExtensionDataManager(SDK.getExtensionContext().id, accessToken);
+    const dataManager = await extensionDataService.getExtensionDataManager(
+      SDK.getExtensionContext().id,
+      accessToken
+    );
 
     return dataManager.getDocument(collection, id);
   }
