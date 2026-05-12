@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "pr-reviewer-lottery",
   "publisher": "DataEnAI-Robidus-Internal",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "name": "PR Reviewer Lottery",
   "description": "An Azure DevOps extension to assign Pull Requests Automatically to a user from a group.",
   "public": false,
